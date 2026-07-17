@@ -1,0 +1,36 @@
+import { Routes, Route } from 'react-router'
+
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+
+import Home from './pages/Home'
+import Products from './pages/Products'
+import HowItWorks from './pages/HowItWorks'
+import Applications from './pages/Applications'
+import Docs from './pages/Docs'
+import FAQ from './pages/FAQ'
+import Support from './pages/Support'
+import Cart from './pages/Cart'
+
+function App() {
+  return (
+    <>
+      <Navbar />
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/applications" element={<Applications />} />
+        <Route path="/docs" element={<Docs />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/cart" element={<Cart />} />
+      </Routes>
+
+      <Footer />
+    </>
+  )
+}
+
+export default App

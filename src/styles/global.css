@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --color-deep-teal: #07282c;
+  --color-surface: #0e3a3f;
+  --color-amber: #ffb224;
+  --color-mist: #eaf4f2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+button,
+a {
+  cursor: pointer;
+}
