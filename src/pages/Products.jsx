@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   PackageSearch,
   Search,
@@ -6,11 +6,42 @@ import {
   X,
 } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
-import { categories, products } from '../data/products'
+import { getProducts } from '../services/productApi'
 
 export default function Products() {
+  const [products, setProducts] = useState([])
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        setLoading(true)
+        setError('')
+
+        const data = await getProducts()
+
+        setProducts(data)
+      } catch (error) {
+        console.error(error)
+        setError('Unable to load products.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProducts()
+  }, [])
+
+  const categories = useMemo(() => {
+    const productCategories = products
+      .map((product) => product.category)
+      .filter(Boolean)
+
+    return ['All', ...new Set(productCategories)]
+  }, [products])
 
   const filteredProducts = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase()
@@ -21,7 +52,7 @@ export default function Products() {
 
       const searchableText = [
         product.name,
-        product.shortDescription,
+        product.sku,
         product.description,
         product.category,
       ]
@@ -34,7 +65,7 @@ export default function Products() {
 
       return matchesCategory && matchesSearch
     })
-  }, [activeCategory, search])
+  }, [products, activeCategory, search])
 
   const clearFilters = () => {
     setSearch('')
@@ -187,40 +218,52 @@ export default function Products() {
             </div>
           </div>
 
-          {/* Product results */}
-          {filteredProducts.length > 0 ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-10 flex min-h-[380px] flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/[0.025] px-6 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--color-amber)]/20 bg-[var(--color-amber)]/10 text-[var(--color-amber)]">
-                <PackageSearch size={30} />
-              </div>
-
-              <h2 className="mt-6 text-2xl font-bold text-white">
-                No products found
-              </h2>
-
-              <p className="mt-3 max-w-md text-sm leading-7 text-slate-400">
-                No products match your current search and category. Try a
-                different keyword or clear the active filters.
+          {loading && (
+            <div className="mt-10 rounded-3xl border border-white/10 bg-slate-900/70 p-10 text-center">
+              <p className="text-slate-300">
+                Loading products...
               </p>
-
-              {hasActiveFilters && (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--color-amber)] px-5 py-3 text-sm font-bold text-[var(--color-deep-teal)] transition duration-300 hover:-translate-y-0.5 hover:brightness-110"
-                >
-                  <X size={17} />
-                  Clear Filters
-                </button>
-              )}
             </div>
           )}
+          {!loading && error && (
+            <div className="mt-10 rounded-3xl border border-red-400/20 bg-red-400/10 p-10 text-center">
+              <h2 className="text-xl font-bold text-white">
+                Unable to load products
+              </h2>
+
+              <p className="mt-3 text-sm text-red-200">
+                {error}
+              </p>
+            </div>
+          )}
+
+          {/* Product results */}
+          {!loading && !error && filteredProducts.length > 0 && (
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
+              ))}
+            </div>
+          )}
+
+          {!loading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <div className="mt-10 flex min-h-[380px] flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/[0.025] px-6 text-center">
+
+                {/* Keep your existing empty-state content here */}
+                
+                {/* Put your empty-state message here */}
+                <p className="text-slate-400">
+                  No products found matching your search criteria.
+                </p>
+
+              </div>
+            )}
+
         </div>
       </section>
     </main>

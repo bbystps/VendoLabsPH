@@ -11,6 +11,9 @@ import Docs from './pages/Docs'
 import FAQ from './pages/FAQ'
 import Support from './pages/Support'
 import Cart from './pages/Cart'
+import ProductDetails from './pages/ProductDetails'
+import Checkout from './pages/Checkout'
+import OrderSuccess from './pages/OrderSuccess'
 
 function App() {
   return (
@@ -20,12 +23,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/products/:slug" element={<ProductDetails />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/applications" element={<Applications />} />
         <Route path="/docs" element={<Docs />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/support" element={<Support />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
       </Routes>
 
       <Footer />

@@ -1,21 +1,50 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router'
-import { Menu, ShoppingCart, X } from 'lucide-react'
+import {
+  Menu,
+  ShoppingCart,
+  X,
+} from 'lucide-react'
+
+import { useCart } from '../context/CartContext'
 
 function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] =
+    useState(false)
 
-  // Replace this with your actual cart item count later.
-  const cartItemCount = 2
+  const {
+    itemCount: cartItemCount,
+  } = useCart()
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Products', path: '/products' },
-    { name: 'How It Works', path: '/how-it-works' },
-    { name: 'Applications', path: '/applications' },
-    { name: 'Docs', path: '/docs' },
-    { name: 'FAQ', path: '/faq' },
-    { name: 'Support', path: '/support' },
+    {
+      name: 'Home',
+      path: '/',
+    },
+    {
+      name: 'Products',
+      path: '/products',
+    },
+    {
+      name: 'How It Works',
+      path: '/how-it-works',
+    },
+    {
+      name: 'Applications',
+      path: '/applications',
+    },
+    {
+      name: 'Docs',
+      path: '/docs',
+    },
+    {
+      name: 'FAQ',
+      path: '/faq',
+    },
+    {
+      name: 'Support',
+      path: '/support',
+    },
   ]
 
   const closeMenu = () => {
@@ -40,7 +69,7 @@ function Navbar() {
             <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-white/10">
               <img
                 src="/logo-dark.png"
-                alt="VendoLabPH logo"
+                alt="VendoLabsPH logo"
                 className="h-9 w-9 object-contain"
               />
             </div>
@@ -49,7 +78,9 @@ function Navbar() {
           <div className="leading-none">
             <p className="text-lg font-bold tracking-tight text-white">
               Vendo
-              <span className="text-[var(--color-amber)]">Labs</span>
+              <span className="text-[var(--color-amber)]">
+                Labs
+              </span>
               PH
             </p>
 
@@ -88,7 +119,7 @@ function Navbar() {
 
         {/* Right-side actions */}
         <div className="flex items-center gap-2">
-          {/* Cart button */}
+          {/* Cart */}
           <NavLink
             to="/cart"
             onClick={closeMenu}
@@ -107,11 +138,15 @@ function Navbar() {
               className="transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
             />
 
-            <span className="hidden sm:inline">Cart</span>
+            <span className="hidden sm:inline">
+              Cart
+            </span>
 
             {cartItemCount > 0 && (
               <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--color-amber)] px-1 text-[10px] font-bold text-[var(--color-deep-teal)] ring-2 ring-[var(--color-deep-teal)]">
-                {cartItemCount}
+                {cartItemCount > 99
+                  ? '99+'
+                  : cartItemCount}
               </span>
             )}
           </NavLink>
@@ -119,12 +154,20 @@ function Navbar() {
           {/* Mobile menu button */}
           <button
             type="button"
-            onClick={() => setIsMenuOpen((current) => !current)}
+            onClick={() =>
+              setIsMenuOpen(
+                (current) => !current,
+              )
+            }
             aria-label="Toggle navigation menu"
             aria-expanded={isMenuOpen}
             className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white transition hover:border-[var(--color-amber)]/40 hover:bg-white/10 lg:hidden"
           >
-            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            {isMenuOpen ? (
+              <X size={22} />
+            ) : (
+              <Menu size={22} />
+            )}
           </button>
         </div>
       </nav>

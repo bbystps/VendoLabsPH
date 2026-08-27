@@ -1,18 +1,30 @@
 import { Link } from 'react-router'
+
 import {
   ArrowUpRight,
   Check,
   ShoppingCart,
 } from 'lucide-react'
+
 import { useCart } from '../context/CartContext'
 import { formatCurrency } from '../utils/formatCurrency'
 
-export default function ProductCard({ product }) {
+export default function ProductCard({
+  product,
+}) {
   const { addToCart } = useCart()
+
+  const stock = Number(product.stock) || 0
+  const inStock = stock > 0
 
   const handleAddToCart = (event) => {
     event.preventDefault()
     event.stopPropagation()
+
+    if (!inStock) {
+      return
+    }
+
     addToCart(product)
   }
 
@@ -26,29 +38,36 @@ export default function ProductCard({ product }) {
         <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-70" />
 
         <img
-          src={product.image}
+          src={
+            product.image_url ||
+            product.image ||
+            '/placeholder-product.png'
+          }
           alt={product.name}
           loading="lazy"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
-
-        {/* Product badge */}
-        {product.badge && (
-          <span className="absolute left-4 top-4 z-20 rounded-full border border-[var(--color-amber)]/30 bg-[var(--color-amber)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-deep-teal)] shadow-lg">
-            {product.badge}
-          </span>
-        )}
 
         {/* View icon */}
         <span className="absolute right-4 top-4 z-20 flex h-10 w-10 translate-y-1 items-center justify-center rounded-xl border border-white/10 bg-slate-950/70 text-white opacity-0 backdrop-blur-md transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
           <ArrowUpRight size={18} />
         </span>
 
-        {/* Availability indicator */}
-        <span className="absolute bottom-4 left-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300 backdrop-blur-md">
-          <Check size={12} strokeWidth={3} />
-          Available
-        </span>
+        {/* Availability */}
+        {inStock ? (
+          <span className="absolute bottom-4 left-4 z-20 inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300 backdrop-blur-md">
+            <Check
+              size={12}
+              strokeWidth={3}
+            />
+
+            In Stock
+          </span>
+        ) : (
+          <span className="absolute bottom-4 left-4 z-20 rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-red-300 backdrop-blur-md">
+            Out of Stock
+          </span>
+        )}
       </Link>
 
       {/* Card body */}
@@ -66,8 +85,12 @@ export default function ProductCard({ product }) {
           </h3>
         </Link>
 
+        <p className="mt-2 text-xs font-medium text-slate-500">
+          SKU: {product.sku}
+        </p>
+
         <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-400">
-          {product.shortDescription}
+          {product.description}
         </p>
 
         {/* Price and button */}
@@ -85,8 +108,13 @@ export default function ProductCard({ product }) {
           <button
             type="button"
             onClick={handleAddToCart}
-            aria-label={`Add ${product.name} to cart`}
-            className="group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--color-amber)] px-4 py-3 text-sm font-bold text-[var(--color-deep-teal)] shadow-[0_0_25px_rgba(245,158,11,0.12)] transition duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)] active:translate-y-0"
+            disabled={!inStock}
+            aria-label={
+              inStock
+                ? `Add ${product.name} to cart`
+                : `${product.name} is out of stock`
+            }
+            className="group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--color-amber)] px-4 py-3 text-sm font-bold text-[var(--color-deep-teal)] shadow-[0_0_25px_rgba(245,158,11,0.12)] transition duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:brightness-100"
           >
             <ShoppingCart
               size={17}
@@ -94,7 +122,11 @@ export default function ProductCard({ product }) {
               className="transition-transform duration-300 group-hover/button:-rotate-6 group-hover/button:scale-110"
             />
 
-            <span>Add</span>
+            <span>
+              {inStock
+                ? 'Add'
+                : 'Sold Out'}
+            </span>
           </button>
         </div>
       </div>
