@@ -57,12 +57,19 @@ function Checkout() {
   const [isSubmitting, setIsSubmitting] =
     useState(false)
 
+  const [checkoutCompleted, setCheckoutCompleted] =
+    useState(false)
+
   /*
    * If somebody manually opens /checkout
    * with no products in the cart,
    * send them back to the cart.
    */
-  if (isCartEmpty) {
+  if (
+    isCartEmpty &&
+    !isSubmitting &&
+    !checkoutCompleted
+  ) {
     return (
       <Navigate
         to="/cart"
@@ -203,23 +210,35 @@ function Checkout() {
       const response =
         await createOrder(orderData)
 
-        /*
-        * The COD order has now been
-        * successfully saved by Laravel.
-        *
-        * Stock was already deducted,
-        * so we can safely clear the cart.
-        */
-        clearCart()
+      /*
+      * Mark checkout as completed BEFORE
+      * clearing the cart.
+      *
+      * This prevents the empty-cart redirect
+      * from sending us back to /cart.
+      */
+      setCheckoutCompleted(true)
 
+      /*
+      * The order is already successfully
+      * created in Laravel, so we can clear
+      * the customer's cart.
+      */
+      clearCart()
+
+      /*
+      * Go to the order confirmation page.
+      */
       navigate(
         `/order-success/${response.order.order_number}`,
         {
+          replace: true,
           state: {
             order: response.order,
           },
         },
       )
+
     } catch (error) {
       console.error(
         'Checkout error:',
@@ -553,8 +572,8 @@ function Checkout() {
                   className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-amber)] px-5 py-4 font-bold text-[var(--color-deep-teal)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                   {isSubmitting
-                    ? 'Creating Order...'
-                    : 'Continue to Payment'}
+                    ? 'Placing Order...'
+                    : 'Place COD Order'}
 
                   {!isSubmitting && (
                     <ArrowRight
@@ -571,15 +590,14 @@ function Checkout() {
                   />
 
                   <p className="text-xs leading-5 text-slate-400">
-                    Your order will
-                    initially be created as
+                    Your order will be placed as a{' '}
                     <strong className="text-slate-300">
-                      {' '}
-                      pending payment
-                    </strong>
-                    . Stock will not be
-                    deducted until payment
-                    is confirmed.
+                      Cash on Delivery
+                    </strong>{' '}
+                    order. Stock will be reserved once
+                    your order is successfully placed,
+                    and payment will be collected upon
+                    delivery.
                   </p>
                 </div>
               </div>

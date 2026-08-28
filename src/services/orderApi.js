@@ -33,3 +33,30 @@ export async function createOrder(orderData) {
 
   return data
 }
+
+export async function getTrackedOrder(token) {
+  const response = await fetch(
+    `${API_URL}/orders/track/${token}`,
+    {
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  )
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    const error = new Error(
+      data.message ||
+        'Unable to load order.',
+    )
+
+    error.status = response.status
+    error.data = data
+
+    throw error
+  }
+
+  return data
+}

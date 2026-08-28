@@ -14,6 +14,7 @@ import Cart from './pages/Cart'
 import ProductDetails from './pages/ProductDetails'
 import Checkout from './pages/Checkout'
 import OrderSuccess from './pages/OrderSuccess'
+import OrderTracking from './pages/OrderTracking'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
+        <Route path="/track-order/:token" element={<OrderTracking />} />
       </Routes>
 
       <Footer />

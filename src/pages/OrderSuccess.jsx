@@ -155,17 +155,25 @@ function OrderSuccess() {
                   </p>
 
                   <p className="mt-1 text-sm leading-6 text-slate-400">
-                    We will add automatic
-                    email notifications
-                    after payment
-                    integration is
-                    completed.
+                    We sent your order confirmation
+                    and tracking link to{' '}
+                    <span className="font-semibold text-white">
+                      {order.customer_email}
+                    </span>.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+
+              <Link
+                to={`/track-order/${order.public_token}`}
+                className="inline-flex flex-1 items-center justify-center rounded-xl bg-[var(--color-amber)] px-5 py-3.5 font-bold text-[var(--color-deep-teal)]"
+              >
+                View Order Status
+              </Link>
+
               <Link
                 to="/products"
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3.5 font-semibold transition hover:bg-white/5"
