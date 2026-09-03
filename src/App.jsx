@@ -15,11 +15,15 @@ import ProductDetails from './pages/ProductDetails'
 import Checkout from './pages/Checkout'
 import OrderSuccess from './pages/OrderSuccess'
 import OrderTracking from './pages/OrderTracking'
+import ScrollToTop from './components/ScrollToTop'
+import CartNotification from './components/CartNotification'
 
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Navbar />
+      <CartNotification />
       
       <Routes>
         <Route path="/" element={<Home />} />
